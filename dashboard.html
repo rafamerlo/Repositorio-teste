@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FamilyHub - Dashboard Desktop</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="desktop-body">
+
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon">🏠</div>
+        <h2>FamilyHub</h2>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a href="#" class="nav-item active">🏠 Início</a>
+        <a href="agenda.html" class="nav-item">📅 Agenda</a>
+        <a href="#" class="nav-item">🛍️ Compras</a>
+        <a href="#" class="nav-item">💰 Finanças</a>
+        <a href="#" class="nav-item">💬 Chat</a>
+
+        <div class="spacer"></div>
+
+        <a href="#" class="nav-item">👤 Meu Perfil</a>
+        <a href="index.html" class="nav-item logout">🚪 Sair</a>
+    </nav>
+</aside>
+
+<main class="main-content">
+
+<header class="main-header">
+    <div class="welcome">
+        <h1>Família Merlotto</h1>
+        <p>Boa tarde, Isa! Aqui está o que está acontecendo hoje.</p>
+    </div>
+
+    <div class="header-actions">
+        <div class="members-list">
+            <span class="avatar mae">MÃE</span>
+            <span class="avatar pai">PAI</span>
+            <span class="avatar ana">ANA</span>
+            <span class="avatar kai">KAI</span>
+            <button class="btn-add">+</button>
+        </div>
+        <div class="notif">🔔</div>
+    </div>
+</header>
+
+<div class="dashboard-grid">
+
+<div class="column">
+
+<!-- AGENDA DINÂMICA -->
+<section class="card">
+
+<div class="card-header">
+<h3>Agenda de Hoje</h3>
+<span>16 de Abril</span>
+</div>
+
+<div id="agenda"></div>
+
+</section>
+
+<!-- MURAL -->
+<section class="card">
+<h3>Mural de Avisos</h3>
+
+<div class="notice">
+<span class="avatar small mae">MÃE</span>
+<div class="notice-content">
+<strong>Mãe <small>08:14</small></strong>
+<p>Lembrem de levar o guarda-chuva hoje!</p>
+</div>
+</div>
+
+<div class="notice">
+<span class="avatar small pai">PAI</span>
+<div class="notice-content">
+<strong>Pai <small>Ontem</small></strong>
+<p>Conta de luz paga ✓</p>
+</div>
+</div>
+
+</section>
+
+</div>
+
+<div class="column">
+
+<div class="tools-grid-desktop">
+
+<div class="tool-card">
+<div class="icon-box green">🛍️</div>
+<h4>Compras</h4>
+<p>7 itens pendentes</p>
+</div>
+
+<div class="tool-card">
+<div class="icon-box yellow">💰</div>
+<h4>Finanças</h4>
+<p>R$ 4.200 gastos este mês</p>
+</div>
+
+<div class="tool-card">
+<div class="icon-box purple">💬</div>
+<h4>Chat</h4>
+<p>2 novas mensagens</p>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</main>
+
+<script src="agenda.js"></script>
+
+</body>
+</html>

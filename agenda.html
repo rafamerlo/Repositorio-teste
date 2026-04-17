@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="dashboard.html">
+<title>Agenda Familiar</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* ===================== ESTILO GERAL ===================== */
+body{
+font-family:Inter;
+margin:0;
+background:#f8fafc;
+}
+
+.agenda{
+width:95%;
+max-width:1200px;
+margin:40px auto;
+display:grid;
+grid-template-columns:400px 1fr;
+background:white;
+border-radius:20px;
+overflow:hidden;
+box-shadow:0 20px 25px rgba(0,0,0,.1);
+}
+
+/* ===================== CALENDÁRIO ===================== */
+
+.calendar{
+background:linear-gradient(135deg,#6366f1,#a855f7);
+color:white;
+padding:30px;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.nav-btn{
+background:rgba(255,255,255,.2);
+border:none;
+color:white;
+padding:8px 12px;
+border-radius:10px;
+cursor:pointer;
+}
+
+.days{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:6px;
+}
+
+.day{
+aspect-ratio:1/1;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:10px;
+cursor:pointer;
+}
+
+.day:hover{background:rgba(255,255,255,.2);}
+
+.today{
+background:white;
+color:#6366f1;
+font-weight:bold;
+}
+
+/* ===================== EVENTOS ===================== */
+
+.content{
+padding:40px;
+}
+
+.add-btn{
+background:#6366f1;
+color:white;
+border:none;
+padding:12px 18px;
+border-radius:10px;
+cursor:pointer;
+margin-bottom:20px;
+}
+
+.task{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px;
+margin-bottom:12px;
+background:#f1f5f9;
+border-radius:12px;
+}
+
+.mae{border-left:5px solid #ec4899;}
+.pai{border-left:5px solid #3b82f6;}
+.ana{border-left:5px solid #f59e0b;}
+.kai{border-left:5px solid #10b981;}
+.todos{border-left:5px solid #6366f1;}
+
+.delete{
+background:#ef4444;
+color:white;
+border:none;
+padding:6px 10px;
+border-radius:8px;
+cursor:pointer;
+}
+
+/* ===================== FORMULÁRIO MODAL ===================== */
+
+.modal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.5);
+display:none;
+align-items:center;
+justify-content:center;
+}
+
+.modal-content{
+background:white;
+padding:25px;
+border-radius:15px;
+width:300px;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+input,select{
+padding:8px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="agenda">
+
+<!-- ================= CALENDÁRIO ================= -->
+<div class="calendar">
+
+<div class="header">
+
+<a href="dashboard.html" class="botão">←</a>
+
+<h2 id="monthYear"></h2>
+
+<div>
+<button class="nav-btn" onclick="changeMonth(-1)">◀</button>
+<button class="nav-btn" onclick="changeMonth(1)">▶</button>
+</div>
+
+</div>
+
+<div class="days" id="days"></div>
+
+</div>
+
+<!-- ================= EVENTOS ================= -->
+<div class="content">
+
+<button class="add-btn" onclick="openModal()">+ Adicionar Evento</button>
+
+<!-- 🔽 NOVO: BOTÕES DE FILTRO -->
+<div style="margin-bottom:15px;">
+<button class="nav-btn" onclick="filterEvents('todos')">Todos</button>
+<button class="nav-btn" onclick="filterEvents('mae')">Mãe</button>
+<button class="nav-btn" onclick="filterEvents('pai')">Pai</button>
+<button class="nav-btn" onclick="filterEvents('ana')">Ana</button>
+<button class="nav-btn" onclick="filterEvents('kai')">Kai</button>
+</div>
+
+<div id="eventList"></div>
+
+</div>
+
+</div>
+
+<!-- ================= FORMULÁRIO ================= -->
+
+<div class="modal" id="modal">
+
+<div class="modal-content">
+
+<h3>Novo Evento</h3>
+
+<input id="title" placeholder="Nome do evento">
+
+<input id="time" type="time">
+
+<input id="place" placeholder="Local">
+
+<select id="person">
+<option value="mae">Mãe</option>
+<option value="pai">Pai</option>
+<option value="ana">Ana</option>
+<option value="kai">Kai</option>
+<option value="todos">Todos</option>
+</select>
+
+<button onclick="saveEvent()">Salvar</button>
+<button onclick="closeModal()">Cancelar</button>
+
+</div>
+</div>
+
+<script>
+
+/* ================= CALENDÁRIO ================= */
+
+const days=document.getElementById("days");
+const monthYear=document.getElementById("monthYear");
+
+let currentDate=new Date();
+
+function renderCalendar(){
+
+days.innerHTML="";
+
+const year=currentDate.getFullYear();
+const month=currentDate.getMonth();
+
+const months=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho",
+"Agosto","Setembro","Outubro","Novembro","Dezembro"];
+
+monthYear.innerText=months[month]+" "+year;
+
+const firstDay=new Date(year,month,1).getDay();
+const lastDay=new Date(year,month+1,0).getDate();
+
+for(let i=0;i<firstDay;i++){
+days.appendChild(document.createElement("div"));
+}
+
+for(let i=1;i<=lastDay;i++){
+
+const day=document.createElement("div");
+day.className="day";
+day.innerText=i;
+
+const today=new Date();
+
+if(
+i===today.getDate() &&
+month===today.getMonth() &&
+year===today.getFullYear()
+){
+day.classList.add("today");
+}
+
+days.appendChild(day);
+}
+}
+
+function changeMonth(step){
+currentDate.setMonth(currentDate.getMonth()+step);
+renderCalendar();
+}
+
+function goToday(){
+currentDate=new Date();
+renderCalendar();
+}
+
+/* ================= EVENTOS ================= */
+
+let events=[
+{title:"Consulta Médica",time:"10:00",place:"Hospital São Lucas",person:"mae"},
+{title:"Treino de Futebol",time:"16:30",place:"Quadra Municipal",person:"kai"},
+{title:"Jantar com Amigos",time:"19:00",place:"Restaurante Sabor",person:"todos"}
+];
+
+let currentFilter = "todos"; // 🔽 NOVO
+
+const eventList=document.getElementById("eventList");
+
+function renderEvents(){
+
+eventList.innerHTML="";
+
+events.forEach((e,index)=>{
+
+// 🔽 FILTRO
+if(currentFilter !== "todos" && e.person !== currentFilter){
+return;
+}
+
+const div=document.createElement("div");
+div.className="task "+e.person;
+
+div.innerHTML=`
+<div>
+<strong>${e.time}</strong> - ${e.title}<br>
+<small>${e.place}</small>
+</div>
+
+<button class="delete" onclick="removeEvent(${index})">Remover</button>
+`;
+
+eventList.appendChild(div);
+
+});
+
+}
+
+function removeEvent(index){
+events.splice(index,1);
+renderEvents();
+}
+
+/* 🔽 NOVA FUNÇÃO DE FILTRO */
+function filterEvents(person){
+currentFilter = person;
+renderEvents();
+}
+
+/* ================= MODAL ================= */
+
+const modal=document.getElementById("modal");
+
+function openModal(){
+modal.style.display="flex";
+}
+
+function closeModal(){
+modal.style.display="none";
+}
+
+function saveEvent(){
+
+const title=document.getElementById("title").value;
+const time=document.getElementById("time").value;
+const place=document.getElementById("place").value;
+const person=document.getElementById("person").value;
+
+if(!title || !time) return alert("Preencha os campos!");
+
+events.push({title,time,place,person});
+
+renderEvents();
+closeModal();
+}
+
+/* INICIAR */
+renderCalendar();
+renderEvents();
+
+</script>
+
+</body>
+</html>
